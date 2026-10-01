@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>J. M. Cortés · Waves in fractional viscoelastic media</title>
+<meta name="description" content="Numerical methods for mechanical wave propagation in fractional viscoelastic media.">
+<meta name="author" content="José M. Cortés">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F8F9;
+    --ink:#16202B;
+    --ink-2:#55656F;
+    --ink-3:#8A98A1;
+    --signal:#15676C;
+    --rule:#DBE1E4;
+    --measure:100%;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --paper:#11181E; --ink:#E7EDF0; --ink-2:#9DAAB3; --ink-3:#6B7A84;
+           --signal:#4FB3B8; --rule:#26323B; }
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;
+    font-weight:400; font-size:17px; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:46rem; margin:0 auto; padding:0 1.5rem 6rem}
+  a{color:var(--signal); text-decoration:none;
+    border-bottom:1px solid color-mix(in srgb, var(--signal) 35%, transparent)}
+  a:hover{border-bottom-color:var(--signal)}
+  a:focus-visible{outline:2px solid var(--signal); outline-offset:3px; border-radius:2px}
+
+  /* ── masthead ─────────────────────────────────────────────── */
+  header{padding:4.5rem 0 0}
+  .name{font-size:1.05rem; font-weight:600; letter-spacing:-.01em; margin:0}
+  .place{color:var(--ink-2); font-size:.95rem; margin:.15rem 0 0}
+  h1{
+    font-weight:300; font-size:clamp(1.7rem,4.6vw,2.6rem); line-height:1.18;
+    letter-spacing:-.025em; margin:2.6rem 0 0; max-width:22ch;
+  }
+
+  /* ── the figure ───────────────────────────────────────────── */
+  figure.demo{margin:3rem 0 0; padding:0}
+  .plot{
+    display:block; width:100%; height:190px;
+    border-top:1px solid var(--rule); border-bottom:1px solid var(--rule);
+  }
+  .controls{
+    display:grid; grid-template-columns:10.5rem 1fr 8.5rem; align-items:center;
+    column-gap:1rem; padding:.75rem 0 0;
+  }
+  .controls .readout{text-align:right}
+  .controls label{font-size:.9rem; color:var(--ink-2); white-space:nowrap}
+  .controls input[type=range]{
+    flex:1 1 12rem; accent-color:var(--signal); min-width:9rem; height:1.5rem;
+  }
+  .readout{
+    font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:.88rem;
+    color:var(--ink); font-variant-numeric:tabular-nums; white-space:nowrap;
+  }
+  figcaption{
+    color:var(--ink-2); font-size:.95rem; margin:1.1rem 0 0; max-width:var(--measure);
+  }
+
+  /* ── model picker and dispersion panels ───────────────────── */
+  .models{display:flex; flex-wrap:wrap; gap:.25rem 1.2rem; margin:0 0 .7rem}
+  .models button{
+    font:inherit; font-size:.92rem; color:var(--ink-2); background:none; border:0;
+    padding:.2rem 0; border-bottom:2px solid transparent; cursor:pointer;
+  }
+  .models button:hover{color:var(--ink)}
+  .models button[aria-checked="true"]{color:var(--ink); border-bottom-color:var(--signal)}
+  .models button:focus-visible{outline:2px solid var(--signal); outline-offset:3px; border-radius:2px}
+  .law{
+    font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:.88rem;
+    color:var(--ink-2); margin:0 0 .9rem;
+  }
+  .disp{display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin:2.2rem 0 0}
+  .ptitle{font-size:.9rem; color:var(--ink-2); margin:0 0 .4rem}
+  .pplot{display:block; width:100%; height:170px}
+  .note{color:var(--ink-3); font-size:.85rem; margin:.7rem 0 0; max-width:var(--measure)}
+
+  /* ── sections: quieter as the page goes on ────────────────── */
+  section{margin:5rem 0 0}
+  h2{
+    font-size:.95rem; font-weight:600; letter-spacing:-.005em;
+    margin:0 0 1.4rem; padding-bottom:.5rem; border-bottom:1px solid var(--rule);
+  }
+  p{max-width:var(--measure); margin:0 0 1.1rem}
+  p, figcaption{text-align:justify; -webkit-hyphens:auto; hyphens:auto}
+  .name, .place, .law, .ptitle, .meta, .cite p{text-align:left; -webkit-hyphens:manual; hyphens:manual}
+  .lead{color:var(--ink)}
+  .quiet{color:var(--ink-2)}
+
+  .entry{margin:0 0 2.2rem; max-width:var(--measure)}
+  .entry h3{font-size:1.05rem; font-weight:600; margin:0 0 .3rem}
+  .entry p{margin:0 0 .55rem}
+  .meta{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:.82rem; color:var(--ink-3); line-height:1.9;
+  }
+  .meta a{border-bottom-color:transparent}
+  .meta a:hover{border-bottom-color:var(--signal)}
+  .sep{color:var(--rule); padding:0 .45rem}
+
+  .cite{
+    border-left:2px solid var(--rule); padding:.1rem 0 .1rem 1rem;
+    margin:0 0 1.8rem; max-width:var(--measure);
+  }
+  .cite p{margin:0 0 .2rem}
+  .cite .who{color:var(--ink-2); font-size:.95rem}
+
+  code{
+    font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:.86em;
+    background:color-mix(in srgb, var(--ink) 6%, transparent);
+    padding:.12em .4em; border-radius:3px;
+  }
+
+  footer{
+    margin:6rem 0 0; padding-top:1.4rem; border-top:1px solid var(--rule);
+    color:var(--ink-3); font-size:.88rem;
+  }
+  footer a{color:var(--ink-2)}
+
+  @media (max-width:30rem){
+    body{font-size:16px}
+    header{padding-top:3rem}
+    .plot{height:150px}
+    .disp{grid-template-columns:1fr}
+    .controls{grid-template-columns:1fr auto; row-gap:.1rem}
+    .controls input[type=range]{grid-column:1 / -1; grid-row:2}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="name">J. M. Cortés</p>
+    <p class="place">Ultrasonics Lab · Universidad de Granada</p>
+
+    <h1>How a wave dies tells you what the material is.</h1>
+  </header>
+
+  <figure class="demo">
+    <div class="models" role="radiogroup" aria-label="Material model">
+      <button type="button" role="radio" data-m="elastic">Elastic</button>
+      <button type="button" role="radio" data-m="kv">Kelvin–Voigt</button>
+      <button type="button" role="radio" data-m="maxwell">Maxwell</button>
+      <button type="button" role="radio" data-m="springpot">Spring-pot</button>
+      <button type="button" role="radio" data-m="fkv">Fractional Kelvin–Voigt</button>
+    </div>
+    <p class="law" id="law"></p>
+    <canvas class="plot" id="wave" aria-label="A shear wave travelling through the
+      selected material. How fast it decays per wavelength depends on the model,
+      the frequency and the fractional order."></canvas>
+    <div class="controls">
+      <label for="f">Frequency, f</label>
+      <input id="f" type="range" min="-1" max="1" step="0.005" value="0">
+      <span class="readout" id="fout">500 Hz</span>
+    </div>
+    <div id="params"></div>
+    <div class="disp">
+      <div>
+        <p class="ptitle">Phase velocity, c (m/s)</p>
+        <canvas class="pplot" id="vel" aria-label="Phase velocity against frequency for the five models."></canvas>
+      </div>
+      <div>
+        <p class="ptitle">Normalized attenuation, k″ / k′</p>
+        <canvas class="pplot" id="att" aria-label="Attenuation per radian of phase against frequency for the five models."></canvas>
+      </div>
+    </div>
+    <figcaption id="cap"></figcaption>
+    <p class="note">
+      Grey curves are the other models, each with its own parameters. The wave
+      shows the first 15 mm from the source at the chosen frequency. With time
+      dependence e<sup>iωt</sup>, k = ω√(ρ/G*) = k′ − ik″, c = ω/k′ and α = k″.
+    </p>
+  </figure>
+
+  <section>
+    <h2>Work</h2>
+    <!-- Texto principal: va en negro. -->
+    <p class="lead"></p>
+    <!-- Texto secundario: va en gris. -->
+    <p class="quiet"></p>
+  </section>
+
+  <section>
+    <h2>Software</h2>
+
+    <div class="entry">
+      <!-- Nombre del programa. -->
+      <h3></h3>
+      <!-- Descripción principal. -->
+      <p></p>
+      <!-- Nota secundaria, en gris. -->
+      <p class="quiet"></p>
+      <!-- Línea en mono: lenguaje, licencia, versión y enlaces. Ejemplo:
+           Python 3<span class="sep">·</span>GPLv3<span class="sep">·</span><code>v1.0</code><br>
+           <a href="URL">Source</a><span class="sep">·</span><a href="URL">Manual</a> -->
+      <p class="meta"></p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Publications</h2>
+
+    <div class="cite">
+      <p>Healthy human skin Kelvin–Voigt fractional and spring-pot biomarkers
+         reconstruction using torsional wave elastography</p>
+      <p class="who">Almashakbeh Y, Shamimi H, Faris IH, <strong>Cortés JM</strong>,
+         Callejas A, Rus G · Physical and Engineering Sciences in Medicine
+         47(2):575–587, 2024</p>
+      <p class="meta"><a href="https://doi.org/10.1007/s13246-024-01387-z">10.1007/s13246-024-01387-z</a></p>
+    </div>
+
+    <p class="quiet">
+      Work in preparation on fractional wave scattering, immersed-interface
+      methods and the inverse problem is listed here as it appears.
+    </p>
+  </section>
+
+  <section>
+    <h2>Contact</h2>
+    <p class="quiet">
+      Write to me about the software, the methods, or a dataset you would like
+      to model.
+    </p>
+    <p class="meta">
+      <a href="mailto:jmcortes@go.ugr.es">jmcortes@go.ugr.es</a><span class="sep">·</span><a href="https://github.com/JMCortes-UGR">GitHub</a><span class="sep">·</span><a href="https://orcid.org/0000-0002-6976-0679">ORCID</a>
+    </p>
+  </section>
+
+  <footer>
+    Built with GitHub Pages. Text under
+    <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>;
+    software under its own licence.
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  const cv = document.getElementById('wave');
+  const fsl = document.getElementById('f');
+  const fout = document.getElementById('fout');
+  const box = document.getElementById('params');
+  const law = document.getElementById('law');
+  const cap = document.getElementById('cap');
+  const btns = document.querySelectorAll('.models button');
+  const ctx = cv.getContext('2d');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W = 0, H = 0, t = 0, raf = null, model = 'springpot';
+
+  // Frequency axis: 50 Hz to 5 kHz on a log scale. The slider holds
+  // u = log10(f / FMID), so u = -1 is 50 Hz and u = 1 is 5 kHz.
+  const FMID = 500;
+  const freq = u => FMID * Math.pow(10, u);
+
+  const sig3 = v => String(+v.toPrecision(3));
+  function hz(f){
+    if (!(f >= 0.1 && f <= 1e9)) return null;
+    if (f < 1e3) return sig3(f) + ' Hz';
+    if (f < 1e6) return sig3(f / 1e3) + ' kHz';
+    return sig3(f / 1e6) + ' MHz';
+  }
+  const cross = (f, text) => { const s = hz(f); return s ? ' ' + text + s + '.' : ''; };
+
+  // Every parameter a model can use. Moduli and viscosity span decades, so
+  // their sliders move in log10 of the value.
+  const PARAMS = {
+    mu:  { label: 'Shear modulus, μ',    log: true,  min: 100,  max: 1e5,
+           fmt: v => sig3(v / 1e3) + ' kPa' },
+    eta: { label: 'Viscosity, η',        log: true,  min: 0.01, max: 100,
+           fmt: v => sig3(v) + ' Pa·s' },
+    G0:  { label: 'Spring-pot, G₀',      log: true,  min: 0.1,  max: 1e4,
+           fmt: v => sig3(v) + ' Pa·s<sup>γ</sup>' },
+    g:   { label: 'Fractional order, γ', log: false, min: 0,    max: 1,    step: 0.01,
+           fmt: v => v.toFixed(2) },
+    rho: { label: 'Density, ρ',          log: false, min: 800,  max: 2000, step: 10,
+           fmt: v => v.toFixed(0) + ' kg/m³' }
+  };
+
+  // Each model keeps its own parameter values. The defaults put all five
+  // near 3 kPa around 500 Hz, so the curves are comparable at first sight.
+  const MODELS = {
+    elastic:   { name: 'Elastic', law: 'G*(ω) = μ',
+                 p: { mu: 3000, rho: 1000 },
+                 note: () => 'No loss and no dispersion: the wave has the same speed '
+                           + 'and the same shape at every frequency.' },
+    kv:        { name: 'Kelvin–Voigt', law: 'G*(ω) = μ + iωη',
+                 p: { mu: 3000, eta: 1, rho: 1000 },
+                 note: q => 'Speed and attenuation α keep growing with frequency, while the '
+                          + 'loss per wavelength approaches its upper limit, k″/k′ = 1.'
+                          + cross(q.mu / (2 * Math.PI * q.eta),
+                                  'The viscous term overtakes the elastic one at μ/(2πη) = ') },
+    maxwell:   { name: 'Maxwell', law: '1/G*(ω) = 1/μ + 1/(iωη)',
+                 p: { mu: 3000, eta: 1, rho: 1000 },
+                 note: q => 'The reverse of Kelvin–Voigt: the material flows at low '
+                          + 'frequency and behaves almost like a spring at high frequency.'
+                          + cross(q.mu / (2 * Math.PI * q.eta),
+                                  'The change happens around μ/(2πη) = ') },
+    springpot: { name: 'Spring-pot', law: 'G*(ω) = G₀(iω)<sup>γ</sup>',
+                 p: { G0: 270, g: 0.3, rho: 1000 },
+                 note: () => 'Loss per wavelength is the same at every frequency and speed '
+                           + 'follows a power law, a straight line on these axes. One '
+                           + 'exponent fixes both.' },
+    fkv:       { name: 'Fractional Kelvin–Voigt', law: 'G*(ω) = μ + G₀(iω)<sup>γ</sup>',
+                 p: { mu: 3000, G0: 270, g: 0.3, rho: 1000 },
+                 note: q => 'A spring in parallel with a spring-pot: elastic at low '
+                          + 'frequency, spring-pot at high frequency.'
+                          + (q.g > 0.01
+                             ? cross(Math.pow(q.mu / q.G0, 1 / q.g) / (2 * Math.PI),
+                                     'The two terms have equal magnitude at ')
+                             : '')
+                          + ' With γ = 1 it is Kelvin–Voigt with η = G₀.' }
+  };
+
+  // G*(ω) in Pa, as [re, im].
+  function modulus(m, w){
+    const q = MODELS[m].p;
+    if (m === 'elastic') return [q.mu, 0];
+    if (m === 'kv')      return [q.mu, w * q.eta];
+    if (m === 'maxwell'){                                   // iωημ/(μ + iωη)
+      const x = w * q.eta / q.mu, d = 1 + x*x;
+      return [q.mu * x*x / d, q.mu * x / d];
+    }
+    const a = q.G0 * Math.pow(w, q.g), ph = Math.PI * q.g / 2;   // G0 (iω)^γ
+    const re = a * Math.cos(ph), im = a * Math.sin(ph);
+    return m === 'springpot' ? [re, im] : [q.mu + re, im];
+  }
+  // k = ω √(ρ/G*): |k| = ω √(ρ/|G*|) and arg k = -arg(G*)/2.
+  // Phase velocity c = ω/k′, attenuation α = k″, and k″/k′ = tan(arg(G*)/2).
+  function wave(m, f){
+    const w = 2 * Math.PI * f, [re, im] = modulus(m, w);
+    const kabs = w * Math.sqrt(MODELS[m].p.rho / Math.hypot(re, im));
+    const a = Math.atan2(im, re) / 2;
+    const kr = kabs * Math.cos(a), ki = kabs * Math.sin(a);
+    return { c: w / kr, alpha: ki, ratio: ki / kr, lambda: 2 * Math.PI / kr };
+  }
+
+  const PANELS = [
+    { cv: document.getElementById('vel'), key: 'c',     log: true },
+    { cv: document.getElementById('att'), key: 'ratio', log: false,
+      lo: -0.04, hi: 1.05, ticks: [0, 0.5, 1] }
+  ];
+  PANELS.forEach(p => { p.ctx = p.cv.getContext('2d'); });
+
+  const css = v => getComputedStyle(document.documentElement)
+                     .getPropertyValue(v).trim();
+
+  function size(){
+    const r = cv.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    W = r.width; H = r.height;
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    for (const p of PANELS){
+      const q = p.cv.getBoundingClientRect();
+      p.w = q.width; p.h = q.height;
+      p.cv.width = p.w * dpr; p.cv.height = p.h * dpr;
+      p.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+  }
+
+  // Wave in real space: the first SPAN metres from the source at the chosen
+  // frequency, so wavelength (2π/k′) and decay (α = k″) both change with f.
+  // The animation runs at one calm pace for every frequency and model (PACE
+  // rad/s); only the shape carries the physics.
+  // If a wavelength is under 4 px it cannot be drawn, and the band between the
+  // envelopes is shaded instead.
+  const SPAN = 0.015, PACE = 3.2;
+  function drawWave(){
+    const f = freq(parseFloat(fsl.value));
+    const r = wave(model, f);
+    const kr = 2 * Math.PI / r.lambda * SPAN;      // x runs 0..1 across SPAN
+    const ki = r.alpha * SPAN;
+    const ph = PACE * t;                           // t in seconds
+
+    ctx.clearRect(0, 0, W, H);
+    const sig = css('--signal');
+    const mid = H / 2;
+    const amp = H * 0.34;
+
+    // axis
+    ctx.strokeStyle = css('--rule'); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, mid); ctx.lineTo(W, mid); ctx.stroke();
+
+    // distance from the source, in mm
+    ctx.fillStyle = css('--ink-3');
+    ctx.font = '11px "IBM Plex Mono", ui-monospace, monospace';
+    ctx.textBaseline = 'bottom';
+    for (const mm of [0, 5, 10, 15]){
+      const px = mm / (1e3 * SPAN) * W;
+      ctx.textAlign = mm === 0 ? 'left' : (mm === 15 ? 'right' : 'center');
+      ctx.fillText(mm === 15 ? '15 mm' : String(mm), px, H - 4);
+    }
+
+    // envelope, drawn faintly: the decay the exponent produces
+    ctx.strokeStyle = sig; ctx.globalAlpha = 0.22; ctx.lineWidth = 1;
+    for (const s of [1, -1]){
+      ctx.beginPath();
+      for (let px = 0; px <= W; px++){
+        const x = px / W;
+        const y = mid - s * amp * Math.exp(-ki * x);
+        px ? ctx.lineTo(px, y) : ctx.moveTo(px, y);
+      }
+      ctx.stroke();
+    }
+
+    if (2 * Math.PI / kr * W < 4){
+      ctx.fillStyle = sig; ctx.globalAlpha = 0.18;
+      ctx.beginPath();
+      for (let px = 0; px <= W; px++) ctx.lineTo(px, mid - amp * Math.exp(-ki * px / W));
+      for (let px = W; px >= 0; px--) ctx.lineTo(px, mid + amp * Math.exp(-ki * px / W));
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      return;
+    }
+    ctx.globalAlpha = 1;
+
+    // the wave itself
+    ctx.strokeStyle = sig; ctx.lineWidth = 2; ctx.lineJoin = 'round';
+    ctx.beginPath();
+    for (let px = 0; px <= W; px++){
+      const x = px / W;
+      const y = mid - amp * Math.exp(-ki * x) * Math.cos(kr * x - ph);
+      px ? ctx.lineTo(px, y) : ctx.moveTo(px, y);
+    }
+    ctx.stroke();
+  }
+
+  // Log axis that follows the data, with ticks at 1, 2 and 5 per decade.
+  function logRange(vals){
+    let lo = Math.min(...vals) / 1.15, hi = Math.max(...vals) * 1.15;
+    if (hi / lo < 3){ const m = Math.sqrt(hi * lo); lo = m / Math.sqrt(3); hi = m * Math.sqrt(3); }
+    const ticks = [];
+    for (let e = Math.floor(Math.log10(lo)); e <= Math.ceil(Math.log10(hi)); e++)
+      for (const s of [1, 2, 5]){
+        const v = s * Math.pow(10, e);
+        if (v >= lo && v <= hi) ticks.push(v);
+      }
+    return { lo, hi, ticks };
+  }
+
+  // One dispersion panel: all five models from 50 Hz to 5 kHz, each with its
+  // own parameters; the chosen one in the signal colour with a dot at f.
+  function panel(p, u0){
+    const c = p.ctx, w = p.w, h = p.h;
+    const L = 36, R = 10, T = 6, B = 36;
+    const pw = w - L - R, ph = h - T - B;
+    const N = 160;
+    const order = Object.keys(MODELS).filter(m => m !== model).concat([model]);
+    const curves = order.map(m => {
+      const v = [];
+      for (let i = 0; i <= N; i++) v.push(wave(m, freq(-1 + 2 * i / N))[p.key]);
+      return v;
+    });
+    const rg = p.log ? logRange(curves.flat()) : p;
+    const X = u => L + (u + 1) / 2 * pw;
+    const Y = v => {
+      const s = p.log
+        ? (Math.log10(v) - Math.log10(rg.lo)) / (Math.log10(rg.hi) - Math.log10(rg.lo))
+        : (v - rg.lo) / (rg.hi - rg.lo);
+      return T + (1 - s) * ph;
+    };
+    const rule = css('--rule'), ink3 = css('--ink-3'), sig = css('--signal');
+    const mono = '"IBM Plex Mono", ui-monospace, monospace';
+    c.clearRect(0, 0, w, h);
+
+    c.strokeStyle = rule; c.lineWidth = 1;
+    c.beginPath(); c.moveTo(L, T); c.lineTo(L, T + ph); c.lineTo(L + pw, T + ph); c.stroke();
+
+    c.fillStyle = ink3; c.font = '11px ' + mono;
+    c.textAlign = 'right'; c.textBaseline = 'middle';
+    for (const v of rg.ticks){
+      const y = Y(v);
+      c.fillText(sig3(v), L - 6, y);
+      c.beginPath(); c.moveTo(L - 3, y); c.lineTo(L, y); c.stroke();
+    }
+    c.textAlign = 'center'; c.textBaseline = 'top';
+    for (const [f, lab] of [[50, '50'], [100, '100'], [500, '500'], [1000, '1k'], [5000, '5k']]){
+      const x = X(Math.log10(f / FMID));
+      c.fillText(lab, x, T + ph + 5);
+      c.beginPath(); c.moveTo(x, T + ph); c.lineTo(x, T + ph + 3); c.stroke();
+    }
+    c.fillText('f (Hz)', L + pw / 2, T + ph + 20);
+
+    c.save();
+    c.beginPath(); c.rect(L, T, pw, ph); c.clip();
+    order.forEach((m, j) => {
+      const sel = m === model;
+      c.strokeStyle = sel ? sig : ink3;
+      c.globalAlpha = sel ? 1 : 0.35;
+      c.lineWidth = sel ? 2 : 1;
+      c.beginPath();
+      curves[j].forEach((v, i) => {
+        const x = X(-1 + 2 * i / N), y = Y(v);
+        i ? c.lineTo(x, y) : c.moveTo(x, y);
+      });
+      c.stroke();
+    });
+    c.globalAlpha = 1;
+    c.restore();
+    const v0 = wave(model, freq(u0))[p.key];
+    c.fillStyle = sig;
+    c.beginPath(); c.arc(X(u0), Y(v0), 4, 0, 2 * Math.PI); c.fill();
+  }
+
+  function draw(){
+    const u = parseFloat(fsl.value), f = freq(u);
+    const r = wave(model, f), M = MODELS[model];
+
+    drawWave();
+    for (const p of PANELS) panel(p, u);
+
+    const keep = Math.exp(-2 * Math.PI * r.ratio);
+    fout.textContent = hz(f);
+    cap.innerHTML = M.name + ' at ' + hz(f) + ': c = ' + sig3(r.c) + ' m/s, λ = '
+      + sig3(1e3 * r.lambda) + ' mm, α = ' + sig3(r.alpha) + ' Np/m. The wave keeps '
+      + (100 * keep).toFixed(keep < 0.01 ? 2 : 1) + '% of its amplitude per wavelength. '
+      + M.note(M.p);
+  }
+
+  // Sliders for the parameters the chosen model actually uses.
+  function buildParams(){
+    const q = MODELS[model].p;
+    box.innerHTML = '';
+    for (const k of Object.keys(q)){
+      const s = PARAMS[k], id = 'p-' + k;
+      const row = document.createElement('div'); row.className = 'controls';
+      const lab = document.createElement('label'); lab.htmlFor = id; lab.textContent = s.label;
+      const inp = document.createElement('input'); inp.type = 'range'; inp.id = id;
+      if (s.log){
+        inp.min = Math.log10(s.min); inp.max = Math.log10(s.max); inp.step = 'any';
+        inp.value = Math.log10(q[k]);
+      } else {
+        inp.min = s.min; inp.max = s.max; inp.step = s.step; inp.value = q[k];
+      }
+      const ro = document.createElement('span'); ro.className = 'readout';
+      ro.innerHTML = s.fmt(q[k]);
+      inp.addEventListener('input', () => {
+        q[k] = s.log ? Math.pow(10, parseFloat(inp.value)) : parseFloat(inp.value);
+        ro.innerHTML = s.fmt(q[k]);
+        draw();
+      });
+      row.append(lab, inp, ro);
+      box.append(row);
+    }
+  }
+
+  function setModel(m){
+    model = m;
+    btns.forEach(b => b.setAttribute('aria-checked', b.dataset.m === m ? 'true' : 'false'));
+    law.innerHTML = MODELS[m].law;
+    buildParams();
+    draw();
+  }
+
+  let last = null;
+  function loop(now){
+    if (last !== null) t += Math.min(now - last, 100) / 1000;   // seconds
+    last = now;
+    drawWave();
+    raf = requestAnimationFrame(loop);
+  }
+
+  function start(){
+    size(); setModel(model);
+    if (!reduce && raf === null) raf = requestAnimationFrame(loop);
+  }
+
+  fsl.addEventListener('input', draw);
+  btns.forEach(b => b.addEventListener('click', () => setModel(b.dataset.m)));
+  window.addEventListener('resize', () => { size(); draw(); });
+  document.fonts && document.fonts.ready.then(draw);
+  start();
+})();
+</script>
+</body>
+</html>
