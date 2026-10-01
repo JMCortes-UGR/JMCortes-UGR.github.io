@@ -116,6 +116,13 @@
   figcaption { color: var(--ink-2); font-size: .95rem; margin: 1.1rem 0 0; }
   .note { color: var(--ink-3); font-size: .85rem; margin: .7rem 0 0; }
   .eq { white-space: nowrap; }
+  .key {
+    display: inline-flex; align-items: center; gap: .3rem; margin-left: .7rem;
+    white-space: nowrap; vertical-align: top;
+  }
+  .key svg { width: 22px; height: 8px; }
+  .key line { stroke: var(--signal); stroke-width: 2; }
+  .key line.dash { stroke-dasharray: 5 4; }
 
   /* Sections */
   section { margin: 5rem 0 0; }
@@ -201,23 +208,25 @@
         <canvas class="pplot" id="vel" aria-label="Phase velocity versus frequency."></canvas>
       </div>
       <div>
-        <p class="ptitle">Normalized attenuation, k″ / k′</p>
-        <canvas class="pplot" id="att" aria-label="Normalized attenuation versus frequency."></canvas>
+        <p class="ptitle">Attenuation, α (Np/m)</p>
+        <canvas class="pplot" id="att" aria-label="Attenuation versus frequency."></canvas>
       </div>
       <div>
-        <p class="ptitle">Storage modulus, G′ (kPa)</p>
-        <canvas class="pplot" id="gs" aria-label="Storage modulus versus frequency."></canvas>
+        <p class="ptitle">Moduli (kPa)
+          <span class="key"><svg viewBox="0 0 22 8" aria-hidden="true"><line x1="1" y1="4" x2="21" y2="4"/></svg>G′</span>
+          <span class="key"><svg viewBox="0 0 22 8" aria-hidden="true"><line class="dash" x1="1" y1="4" x2="21" y2="4"/></svg>G″</span>
+        </p>
+        <canvas class="pplot" id="gmod" aria-label="Storage modulus G′ (solid) and loss modulus G″ (dashed) versus frequency."></canvas>
       </div>
       <div>
-        <p class="ptitle">Loss modulus, G″ (kPa)</p>
-        <canvas class="pplot" id="gl" aria-label="Loss modulus versus frequency."></canvas>
+        <p class="ptitle">Dynamic modulus, |G*| (kPa)</p>
+        <canvas class="pplot" id="gabs" aria-label="Magnitude of the complex shear modulus versus frequency."></canvas>
       </div>
     </div>
 
     <figcaption id="cap"></figcaption>
     <p class="note">
-      Grey curves: the other models with their own parameters. Time dependence
-      e<sup>iωt</sup>, <span class="eq">k = ω√(ρ/G*) = k′ − ik″</span>,
+      Time dependence e<sup>iωt</sup>, <span class="eq">k = ω√(ρ/G*) = k′ − ik″</span>,
       <span class="eq">c = ω/k′</span>, <span class="eq">α = k″</span>.
     </p>
   </figure>
@@ -344,8 +353,8 @@
       name: 'Spring-pot',
       law: 'G*(ω) = G₀(iω)<sup>γ</sup>',
       p: { G0: 270, g: 0.3, rho: 1000 },
-      note: () => 'Constant loss angle πγ/2, so k″/k′ = tan(πγ/4) at every frequency '
-        + 'and c ∝ f<sup>γ/2</sup>.',
+      note: () => 'Constant loss angle πγ/2, so k″/k′ = tan(πγ/4) at every frequency, '
+        + 'c ∝ f<sup>γ/2</sup> and α ∝ f<sup>1−γ/2</sup>.',
     },
     fkv: {
       name: 'Fractional Kelvin–Voigt',
@@ -386,14 +395,17 @@
     const kAbs = w * Math.sqrt(MODELS[m].p.rho / Math.hypot(g1, g2));
     const half = Math.atan2(g2, g1) / 2;
     const k1 = kAbs * Math.cos(half), k2 = kAbs * Math.sin(half);
-    return { c: w / k1, alpha: k2, ratio: k2 / k1, lambda: 2 * Math.PI / k1, G1: g1 / 1e3, G2: g2 / 1e3 };
+    return {
+      c: w / k1, alpha: k2, ratio: k2 / k1, lambda: 2 * Math.PI / k1,
+      G1: g1 / 1e3, G2: g2 / 1e3, Gabs: Math.hypot(g1, g2) / 1e3,   // moduli in kPa
+    };
   }
 
   const PANELS = [
-    { cv: $('vel'), key: 'c',     log: true },
-    { cv: $('att'), key: 'ratio', log: false, lo: -0.04, hi: 1.05, ticks: [0, 0.5, 1] },
-    { cv: $('gs'),  key: 'G1',    log: true },
-    { cv: $('gl'),  key: 'G2',    log: true },
+    { cv: $('vel'),  log: true,  series: [{ key: 'c' }] },
+    { cv: $('att'),  log: false, series: [{ key: 'alpha' }] },
+    { cv: $('gmod'), log: true,  series: [{ key: 'G1' }, { key: 'G2', dash: [5, 4] }] },
+    { cv: $('gabs'), log: true,  series: [{ key: 'Gabs' }] },
   ];
   for (const p of PANELS) p.ctx = p.cv.getContext('2d');
 
@@ -468,8 +480,9 @@
     ctx.stroke();
   }
 
-  // Log axis fitted to the positive data. Ticks at 1-2-5 per decade, 1-3 when
-  // the range spans more than two decades, one per decade beyond three.
+  // Log axis fitted to the positive data. Mantissa sets go from sparse to
+  // dense; the sparsest one giving at least three ticks is used.
+  const MANTISSAS = [[1], [1, 3], [1, 2, 5], [1, 1.5, 2, 3, 5, 7], [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8]];
   function logAxis(vals) {
     const pos = vals.filter(v => v > 0 && isFinite(v));
     if (!pos.length) return { lo: 0.1, hi: 10, ticks: [1] };
@@ -478,30 +491,45 @@
       const m = Math.sqrt(hi * lo);
       lo = m / Math.sqrt(3); hi = m * Math.sqrt(3);
     }
-    const steps = hi / lo > 1000 ? [1] : hi / lo > 100 ? [1, 3] : [1, 2, 5];
-    const ticks = [];
-    for (let e = Math.floor(Math.log10(lo)); e <= Math.ceil(Math.log10(hi)); e++) {
-      for (const s of steps) {
-        const v = s * Math.pow(10, e);
-        if (v >= lo && v <= hi) ticks.push(v);
+    let ticks = [];
+    for (const set of MANTISSAS) {
+      ticks = [];
+      for (let e = Math.floor(Math.log10(lo)); e <= Math.ceil(Math.log10(hi)); e++) {
+        for (const s of set) {
+          const v = +(s * Math.pow(10, e)).toPrecision(12);
+          if (v >= lo && v <= hi) ticks.push(v);
+        }
       }
+      if (ticks.length >= 3) break;
     }
     return { lo, hi, ticks };
   }
+
+  // Linear axis from zero, about four 1-2-5 intervals.
+  function linAxis(vals) {
+    const top = Math.max(0, ...vals.filter(isFinite));
+    const hi = top > 0 ? top * 1.08 : 1;
+    const raw = hi / 4, mag = Math.pow(10, Math.floor(Math.log10(raw))), n = raw / mag;
+    const step = (n < 1.5 ? 1 : n < 3 ? 2 : n < 7 ? 5 : 10) * mag;
+    const ticks = [];
+    for (let v = 0; v <= hi; v += step) ticks.push(+v.toPrecision(12));
+    return { lo: -0.04 * hi, hi, ticks };
+  }
+
+  const tickLabel = v => v >= 1e7 ? fmt3(v / 1e6) + 'M'
+    : v >= 1e4 ? fmt3(v / 1e3) + 'k'
+    : v > 0 && v < 0.01 ? v.toExponential(0)
+    : fmt3(v);
 
   function drawPanel(p, u0) {
     const c = p.ctx, w = p.w, h = p.h;
     const L = 36, R = 10, T = 6, B = 36;
     const pw = w - L - R, ph = h - T - B;
 
-    // selected model last so it is drawn on top
-    const order = Object.keys(MODELS).filter(m => m !== model).concat(model);
-    const curves = order.map(m => {
-      const v = [];
-      for (let i = 0; i <= N_CURVE; i++) v.push(dispersion(m, freq(-1 + 2 * i / N_CURVE))[p.key]);
-      return v;
-    });
-    const ax = p.log ? logAxis(curves.flat()) : p;
+    const pts = [];
+    for (let i = 0; i <= N_CURVE; i++) pts.push(dispersion(model, freq(-1 + 2 * i / N_CURVE)));
+    const curves = p.series.map(s => pts.map(d => d[s.key]));
+    const ax = p.log ? logAxis(curves.flat()) : linAxis(curves.flat());
     const X = u => L + (u + 1) / 2 * pw;
     const Y = v => {
       const s = p.log
@@ -509,20 +537,20 @@
         : (v - ax.lo) / (ax.hi - ax.lo);
       return T + (1 - s) * ph;
     };
-    const sig = css('--signal'), ink3 = css('--ink-3');
+    const sig = css('--signal');
 
     c.clearRect(0, 0, w, h);
     c.strokeStyle = css('--rule');
     c.lineWidth = 1;
     c.beginPath(); c.moveTo(L, T); c.lineTo(L, T + ph); c.lineTo(L + pw, T + ph); c.stroke();
 
-    c.fillStyle = ink3;
+    c.fillStyle = css('--ink-3');
     c.font = '11px ' + MONO;
     c.textAlign = 'right';
     c.textBaseline = 'middle';
     for (const v of ax.ticks) {
       const y = Y(v);
-      c.fillText(fmt3(v), L - 6, y);
+      c.fillText(tickLabel(v), L - 6, y);
       c.beginPath(); c.moveTo(L - 3, y); c.lineTo(L, y); c.stroke();
     }
     c.textAlign = 'center';
@@ -536,14 +564,12 @@
 
     c.save();
     c.beginPath(); c.rect(L, T, pw, ph); c.clip();
-    // zero values (G″ of an elastic solid) have no place on a log axis: lift the pen
-    order.forEach((m, j) => {
-      const selected = m === model;
-      c.strokeStyle = selected ? sig : ink3;
-      c.globalAlpha = selected ? 1 : 0.35;
-      c.lineWidth = selected ? 2 : 1;
+    c.strokeStyle = sig;
+    c.lineWidth = 2;
+    p.series.forEach((s, j) => {
+      c.setLineDash(s.dash || []);
       c.beginPath();
-      let pen = false;
+      let pen = false;   // zeros (G″ of an elastic solid) have no place on a log axis
       curves[j].forEach((v, i) => {
         if (p.log && !(v > 0)) { pen = false; return; }
         const x = X(-1 + 2 * i / N_CURVE), y = Y(v);
@@ -554,12 +580,15 @@
     });
     c.restore();
 
-    const v0 = dispersion(model, freq(u0))[p.key];
-    if (p.log && !(v0 > 0)) return;
+    const d0 = dispersion(model, freq(u0));
     c.fillStyle = sig;
-    c.beginPath();
-    c.arc(X(u0), Y(v0), 4, 0, 2 * Math.PI);
-    c.fill();
+    for (const s of p.series) {
+      const v = d0[s.key];
+      if (p.log && !(v > 0)) continue;
+      c.beginPath();
+      c.arc(X(u0), Y(v), 4, 0, 2 * Math.PI);
+      c.fill();
+    }
   }
 
   function render() {
