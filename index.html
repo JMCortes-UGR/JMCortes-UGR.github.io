@@ -10,132 +10,132 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --paper:#F6F8F9;
-    --ink:#16202B;
-    --ink-2:#55656F;
-    --ink-3:#8A98A1;
-    --signal:#15676C;
-    --rule:#DBE1E4;
-    --measure:100%;
+  :root {
+    --paper: #F6F8F9;
+    --ink: #16202B;
+    --ink-2: #55656F;
+    --ink-3: #8A98A1;
+    --signal: #15676C;
+    --rule: #DBE1E4;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
   }
-  @media (prefers-color-scheme: dark){
-    :root{ --paper:#11181E; --ink:#E7EDF0; --ink-2:#9DAAB3; --ink-3:#6B7A84;
-           --signal:#4FB3B8; --rule:#26323B; }
-  }
-  *{box-sizing:border-box}
-  html{-webkit-text-size-adjust:100%}
-  body{
-    margin:0; background:var(--paper); color:var(--ink);
-    font-family:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;
-    font-weight:400; font-size:17px; line-height:1.65;
-    -webkit-font-smoothing:antialiased;
-  }
-  .wrap{max-width:46rem; margin:0 auto; padding:0 1.5rem 6rem}
-  a{color:var(--signal); text-decoration:none;
-    border-bottom:1px solid color-mix(in srgb, var(--signal) 35%, transparent)}
-  a:hover{border-bottom-color:var(--signal)}
-  a:focus-visible{outline:2px solid var(--signal); outline-offset:3px; border-radius:2px}
-
-  /* ── masthead ─────────────────────────────────────────────── */
-  header{padding:4.5rem 0 0}
-  .name{font-size:1.05rem; font-weight:600; letter-spacing:-.01em; margin:0}
-  .place{color:var(--ink-2); font-size:.95rem; margin:.15rem 0 0}
-  h1{
-    font-weight:300; font-size:clamp(1.7rem,4.6vw,2.6rem); line-height:1.18;
-    letter-spacing:-.025em; margin:2.6rem 0 0; max-width:22ch;
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #11181E; --ink: #E7EDF0; --ink-2: #9DAAB3; --ink-3: #6B7A84;
+      --signal: #4FB3B8; --rule: #26323B;
+    }
   }
 
-  /* ── the figure ───────────────────────────────────────────── */
-  figure.demo{margin:3rem 0 0; padding:0}
-  .plot{
-    display:block; width:100%; height:190px;
-    border-top:1px solid var(--rule); border-bottom:1px solid var(--rule);
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 400 17px/1.65 "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
-  .controls{
-    display:grid; grid-template-columns:10.5rem 1fr 8.5rem; align-items:center;
-    column-gap:1rem; padding:.75rem 0 0;
+  .wrap { max-width: 46rem; margin: 0 auto; padding: 0 1.5rem 6rem; }
+
+  a {
+    color: var(--signal);
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--signal) 35%, transparent);
   }
-  .controls .readout{text-align:right}
-  .controls label{font-size:.9rem; color:var(--ink-2); white-space:nowrap}
-  .controls input[type=range]{
-    flex:1 1 12rem; accent-color:var(--signal); min-width:9rem; height:1.5rem;
+  a:hover { border-bottom-color: var(--signal); }
+  a:focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; border-radius: 2px; }
+
+  p { margin: 0 0 1.1rem; }
+  p, figcaption { text-align: justify; -webkit-hyphens: auto; hyphens: auto; }
+  .name, .place, .law, .meta, .note, .cite p {
+    text-align: left; -webkit-hyphens: manual; hyphens: manual;
   }
-  .readout{
-    font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:.88rem;
-    color:var(--ink); font-variant-numeric:tabular-nums; white-space:nowrap;
-  }
-  figcaption{
-    color:var(--ink-2); font-size:.95rem; margin:1.1rem 0 0; max-width:var(--measure);
+  .lead { color: var(--ink); }
+  .quiet { color: var(--ink-2); }
+
+  /* Header */
+  header { padding: 4.5rem 0 0; }
+  .name { font-size: 1.05rem; font-weight: 600; letter-spacing: -.01em; margin: 0; }
+  .place { color: var(--ink-2); font-size: .95rem; margin: .15rem 0 0; }
+  h1 {
+    font-weight: 300; font-size: clamp(1.7rem, 4.6vw, 2.6rem); line-height: 1.18;
+    letter-spacing: -.025em; margin: 2.6rem 0 0; max-width: 22ch;
   }
 
-  /* ── model picker and dispersion panels ───────────────────── */
-  .models{display:flex; flex-wrap:wrap; gap:.25rem 1.2rem; margin:0 0 .7rem}
-  .models button{
-    font:inherit; font-size:.92rem; color:var(--ink-2); background:none; border:0;
-    padding:.2rem 0; border-bottom:2px solid transparent; cursor:pointer;
+  /* Interactive figure */
+  figure.demo { margin: 3rem 0 0; padding: 0; }
+  .models { display: flex; flex-wrap: wrap; gap: .25rem 1.2rem; margin: 0 0 .7rem; }
+  .models button {
+    font: inherit; font-size: .92rem; color: var(--ink-2);
+    background: none; border: 0; border-bottom: 2px solid transparent;
+    padding: .2rem 0; cursor: pointer;
   }
-  .models button:hover{color:var(--ink)}
-  .models button[aria-checked="true"]{color:var(--ink); border-bottom-color:var(--signal)}
-  .models button:focus-visible{outline:2px solid var(--signal); outline-offset:3px; border-radius:2px}
-  .law{
-    font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:.88rem;
-    color:var(--ink-2); margin:0 0 .9rem;
-  }
-  .disp{display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin:2.2rem 0 0}
-  .ptitle{font-size:.9rem; color:var(--ink-2); margin:0 0 .4rem}
-  .pplot{display:block; width:100%; height:170px}
-  .note{color:var(--ink-3); font-size:.85rem; margin:.7rem 0 0; max-width:var(--measure)}
-
-  /* ── sections: quieter as the page goes on ────────────────── */
-  section{margin:5rem 0 0}
-  h2{
-    font-size:.95rem; font-weight:600; letter-spacing:-.005em;
-    margin:0 0 1.4rem; padding-bottom:.5rem; border-bottom:1px solid var(--rule);
-  }
-  p{max-width:var(--measure); margin:0 0 1.1rem}
-  p, figcaption{text-align:justify; -webkit-hyphens:auto; hyphens:auto}
-  .name, .place, .law, .ptitle, .meta, .cite p{text-align:left; -webkit-hyphens:manual; hyphens:manual}
-  .lead{color:var(--ink)}
-  .quiet{color:var(--ink-2)}
-
-  .entry{margin:0 0 2.2rem; max-width:var(--measure)}
-  .entry h3{font-size:1.05rem; font-weight:600; margin:0 0 .3rem}
-  .entry p{margin:0 0 .55rem}
-  .meta{
-    font-family:"IBM Plex Mono",ui-monospace,monospace;
-    font-size:.82rem; color:var(--ink-3); line-height:1.9;
-  }
-  .meta a{border-bottom-color:transparent}
-  .meta a:hover{border-bottom-color:var(--signal)}
-  .sep{color:var(--rule); padding:0 .45rem}
-
-  .cite{
-    border-left:2px solid var(--rule); padding:.1rem 0 .1rem 1rem;
-    margin:0 0 1.8rem; max-width:var(--measure);
-  }
-  .cite p{margin:0 0 .2rem}
-  .cite .who{color:var(--ink-2); font-size:.95rem}
-
-  code{
-    font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:.86em;
-    background:color-mix(in srgb, var(--ink) 6%, transparent);
-    padding:.12em .4em; border-radius:3px;
+  .models button:hover { color: var(--ink); }
+  .models button[aria-checked="true"] { color: var(--ink); border-bottom-color: var(--signal); }
+  .models button:focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; border-radius: 2px; }
+  .law { font-family: var(--mono); font-size: .88rem; color: var(--ink-2); margin: 0 0 .9rem; }
+  .plot {
+    display: block; width: 100%; height: 190px;
+    border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
   }
 
-  footer{
-    margin:6rem 0 0; padding-top:1.4rem; border-top:1px solid var(--rule);
-    color:var(--ink-3); font-size:.88rem;
+  .controls {
+    display: grid; grid-template-columns: 10.5rem 1fr 8.5rem; align-items: center;
+    column-gap: 1rem; padding: .75rem 0 0;
   }
-  footer a{color:var(--ink-2)}
+  .controls label { font-size: .9rem; color: var(--ink-2); white-space: nowrap; }
+  .controls input[type=range] { accent-color: var(--signal); min-width: 9rem; height: 1.5rem; }
+  .readout {
+    font-family: var(--mono); font-size: .88rem; color: var(--ink);
+    font-variant-numeric: tabular-nums; white-space: nowrap; text-align: right;
+  }
 
-  @media (max-width:30rem){
-    body{font-size:16px}
-    header{padding-top:3rem}
-    .plot{height:150px}
-    .disp{grid-template-columns:1fr}
-    .controls{grid-template-columns:1fr auto; row-gap:.1rem}
-    .controls input[type=range]{grid-column:1 / -1; grid-row:2}
+  .disp { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 2.2rem 0 0; }
+  /* side padding equals the panel axis margins (L, R in drawPanel) */
+  .ptitle {
+    font-size: .9rem; color: var(--ink-2); margin: 0 0 .4rem;
+    text-align: center; padding: 0 10px 0 36px;
+  }
+  .pplot { display: block; width: 100%; height: 170px; }
+  figcaption { color: var(--ink-2); font-size: .95rem; margin: 1.1rem 0 0; }
+  .note { color: var(--ink-3); font-size: .85rem; margin: .7rem 0 0; }
+  .eq { white-space: nowrap; }
+
+  /* Sections */
+  section { margin: 5rem 0 0; }
+  h2 {
+    font-size: .95rem; font-weight: 600; letter-spacing: -.005em;
+    margin: 0 0 1.4rem; padding-bottom: .5rem; border-bottom: 1px solid var(--rule);
+  }
+  .entry { margin: 0 0 2.2rem; }
+  .entry h3 { font-size: 1.05rem; font-weight: 600; margin: 0 0 .3rem; }
+  .entry p { margin: 0 0 .55rem; }
+  .meta { font-family: var(--mono); font-size: .82rem; color: var(--ink-3); line-height: 1.9; }
+  .meta a { border-bottom-color: transparent; }
+  .meta a:hover { border-bottom-color: var(--signal); }
+  .sep { color: var(--rule); padding: 0 .45rem; }
+  .cite { border-left: 2px solid var(--rule); padding: .1rem 0 .1rem 1rem; margin: 0 0 1.8rem; }
+  .cite p { margin: 0 0 .2rem; }
+  .cite .who { color: var(--ink-2); font-size: .95rem; }
+  code {
+    font-family: var(--mono); font-size: .86em;
+    background: color-mix(in srgb, var(--ink) 6%, transparent);
+    padding: .12em .4em; border-radius: 3px;
+  }
+
+  footer {
+    margin: 6rem 0 0; padding-top: 1.4rem; border-top: 1px solid var(--rule);
+    color: var(--ink-3); font-size: .88rem;
+  }
+  footer a { color: var(--ink-2); }
+
+  @media (max-width: 30rem) {
+    body { font-size: 16px; }
+    header { padding-top: 3rem; }
+    .plot { height: 150px; }
+    .disp { grid-template-columns: 1fr; }
+    .controls { grid-template-columns: 1fr auto; row-gap: .1rem; }
+    .controls input[type=range] { grid-column: 1 / -1; grid-row: 2; }
   }
 </style>
 </head>
@@ -144,13 +144,12 @@
 
   <header>
     <p class="name">J. M. Cortés</p>
-    <p class="place">Ultrasonics Lab · Universidad de Granada</p>
-
+    <p class="place">Ultrasonics Lab · University of Granada</p>
     <h1>How a wave dies tells you what the material is.</h1>
   </header>
 
   <figure class="demo">
-    <div class="models" role="radiogroup" aria-label="Material model">
+    <div class="models" role="radiogroup" aria-label="Rheological model">
       <button type="button" role="radio" data-m="elastic">Elastic</button>
       <button type="button" role="radio" data-m="kv">Kelvin–Voigt</button>
       <button type="button" role="radio" data-m="maxwell">Maxwell</button>
@@ -158,61 +157,60 @@
       <button type="button" role="radio" data-m="fkv">Fractional Kelvin–Voigt</button>
     </div>
     <p class="law" id="law"></p>
-    <canvas class="plot" id="wave" aria-label="A shear wave travelling through the
-      selected material. How fast it decays per wavelength depends on the model,
-      the frequency and the fractional order."></canvas>
+    <canvas class="plot" id="wave" aria-label="Shear wave displacement over the first 15 mm from the source."></canvas>
+
     <div class="controls">
       <label for="f">Frequency, f</label>
       <input id="f" type="range" min="-1" max="1" step="0.005" value="0">
       <span class="readout" id="fout">500 Hz</span>
     </div>
     <div id="params"></div>
+
     <div class="disp">
       <div>
         <p class="ptitle">Phase velocity, c (m/s)</p>
-        <canvas class="pplot" id="vel" aria-label="Phase velocity against frequency for the five models."></canvas>
+        <canvas class="pplot" id="vel" aria-label="Phase velocity versus frequency."></canvas>
       </div>
       <div>
         <p class="ptitle">Normalized attenuation, k″ / k′</p>
-        <canvas class="pplot" id="att" aria-label="Attenuation per radian of phase against frequency for the five models."></canvas>
+        <canvas class="pplot" id="att" aria-label="Normalized attenuation versus frequency."></canvas>
+      </div>
+      <div>
+        <p class="ptitle">Storage modulus, G′ (kPa)</p>
+        <canvas class="pplot" id="gs" aria-label="Storage modulus versus frequency."></canvas>
+      </div>
+      <div>
+        <p class="ptitle">Loss modulus, G″ (kPa)</p>
+        <canvas class="pplot" id="gl" aria-label="Loss modulus versus frequency."></canvas>
       </div>
     </div>
+
     <figcaption id="cap"></figcaption>
     <p class="note">
-      Grey curves are the other models, each with its own parameters. The wave
-      shows the first 15 mm from the source at the chosen frequency. With time
-      dependence e<sup>iωt</sup>, k = ω√(ρ/G*) = k′ − ik″, c = ω/k′ and α = k″.
+      Grey curves: the other models with their own parameters. Time dependence
+      e<sup>iωt</sup>, <span class="eq">k = ω√(ρ/G*) = k′ − ik″</span>,
+      <span class="eq">c = ω/k′</span>, <span class="eq">α = k″</span>.
     </p>
   </figure>
 
   <section>
     <h2>Work</h2>
-    <!-- Texto principal: va en negro. -->
     <p class="lead"></p>
-    <!-- Texto secundario: va en gris. -->
     <p class="quiet"></p>
   </section>
 
   <section>
     <h2>Software</h2>
-
     <div class="entry">
-      <!-- Nombre del programa. -->
       <h3></h3>
-      <!-- Descripción principal. -->
       <p></p>
-      <!-- Nota secundaria, en gris. -->
       <p class="quiet"></p>
-      <!-- Línea en mono: lenguaje, licencia, versión y enlaces. Ejemplo:
-           Python 3<span class="sep">·</span>GPLv3<span class="sep">·</span><code>v1.0</code><br>
-           <a href="URL">Source</a><span class="sep">·</span><a href="URL">Manual</a> -->
       <p class="meta"></p>
     </div>
   </section>
 
   <section>
     <h2>Publications</h2>
-
     <div class="cite">
       <p>Healthy human skin Kelvin–Voigt fractional and spring-pot biomarkers
          reconstruction using torsional wave elastography</p>
@@ -221,368 +219,397 @@
          47(2):575–587, 2024</p>
       <p class="meta"><a href="https://doi.org/10.1007/s13246-024-01387-z">10.1007/s13246-024-01387-z</a></p>
     </div>
-
     <p class="quiet">
-      Work in preparation on fractional wave scattering, immersed-interface
-      methods and the inverse problem is listed here as it appears.
+      Further work on fractional wave scattering, immersed interface methods and
+      inverse problems is in preparation.
     </p>
   </section>
 
   <section>
     <h2>Contact</h2>
-    <p class="quiet">
-      Write to me about the software, the methods, or a dataset you would like
-      to model.
-    </p>
     <p class="meta">
       <a href="mailto:jmcortes@go.ugr.es">jmcortes@go.ugr.es</a><span class="sep">·</span><a href="https://github.com/JMCortes-UGR">GitHub</a><span class="sep">·</span><a href="https://orcid.org/0000-0002-6976-0679">ORCID</a>
     </p>
   </section>
 
   <footer>
-    Built with GitHub Pages. Text under
-    <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>;
-    software under its own licence.
+    © 2026 J. M. Cortés · Text licensed under
+    <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
   </footer>
 
 </div>
 
 <script>
-(function(){
-  const cv = document.getElementById('wave');
-  const fsl = document.getElementById('f');
-  const fout = document.getElementById('fout');
-  const box = document.getElementById('params');
-  const law = document.getElementById('law');
-  const cap = document.getElementById('cap');
-  const btns = document.querySelectorAll('.models button');
-  const ctx = cv.getContext('2d');
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let W = 0, H = 0, t = 0, raf = null, model = 'springpot';
+(() => {
+  'use strict';
 
-  // Frequency axis: 50 Hz to 5 kHz on a log scale. The slider holds
-  // u = log10(f / FMID), so u = -1 is 50 Hz and u = 1 is 5 kHz.
-  const FMID = 500;
-  const freq = u => FMID * Math.pow(10, u);
+  const F_MID = 500;      // Hz; slider value u = log10(f / F_MID), u in [-1, 1]
+  const SPAN = 0.015;     // m shown in the wave plot
+  const PACE = 3.2;       // rad/s, display phase rate (not physical time)
+  const N_CURVE = 160;
+  const MONO = '"IBM Plex Mono", ui-monospace, monospace';
 
-  const sig3 = v => String(+v.toPrecision(3));
-  function hz(f){
+  const $ = id => document.getElementById(id);
+  const wavePlot = $('wave');
+  const fSlider = $('f');
+  const fOut = $('fout');
+  const paramBox = $('params');
+  const lawOut = $('law');
+  const caption = $('cap');
+  const modelBtns = document.querySelectorAll('.models button');
+  const ctx = wavePlot.getContext('2d');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let model = 'springpot';
+  let W = 0, H = 0;
+  let t = 0, tPrev = null, raf = null;
+
+  const freq = u => F_MID * Math.pow(10, u);
+  const fmt3 = v => String(+v.toPrecision(3));
+  const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+  function fmtHz(f) {
     if (!(f >= 0.1 && f <= 1e9)) return null;
-    if (f < 1e3) return sig3(f) + ' Hz';
-    if (f < 1e6) return sig3(f / 1e3) + ' kHz';
-    return sig3(f / 1e6) + ' MHz';
+    if (f < 1e3) return fmt3(f) + ' Hz';
+    if (f < 1e6) return fmt3(f / 1e3) + ' kHz';
+    return fmt3(f / 1e6) + ' MHz';
   }
-  const cross = (f, text) => { const s = hz(f); return s ? ' ' + text + s + '.' : ''; };
 
-  // Every parameter a model can use. Moduli and viscosity span decades, so
-  // their sliders move in log10 of the value.
+  const crossover = (label, f) => {
+    const s = fmtHz(f);
+    return s ? ` ${label} ${s}.` : '';
+  };
+
+  // Moduli and viscosity sliders work on log10 of the value.
   const PARAMS = {
-    mu:  { label: 'Shear modulus, μ',    log: true,  min: 100,  max: 1e5,
-           fmt: v => sig3(v / 1e3) + ' kPa' },
-    eta: { label: 'Viscosity, η',        log: true,  min: 0.01, max: 100,
-           fmt: v => sig3(v) + ' Pa·s' },
-    G0:  { label: 'Spring-pot, G₀',      log: true,  min: 0.1,  max: 1e4,
-           fmt: v => sig3(v) + ' Pa·s<sup>γ</sup>' },
-    g:   { label: 'Fractional order, γ', log: false, min: 0,    max: 1,    step: 0.01,
-           fmt: v => v.toFixed(2) },
-    rho: { label: 'Density, ρ',          log: false, min: 800,  max: 2000, step: 10,
-           fmt: v => v.toFixed(0) + ' kg/m³' }
+    mu:  { label: 'Shear modulus, μ',    log: true,  min: 100,  max: 1e5,  fmt: v => fmt3(v / 1e3) + ' kPa' },
+    eta: { label: 'Viscosity, η',        log: true,  min: 0.01, max: 100,  fmt: v => fmt3(v) + ' Pa·s' },
+    G0:  { label: 'Spring-pot, G₀',      log: true,  min: 0.1,  max: 1e4,  fmt: v => fmt3(v) + ' Pa·s<sup>γ</sup>' },
+    g:   { label: 'Fractional order, γ', log: false, min: 0,    max: 1,    step: 0.01, fmt: v => v.toFixed(2) },
+    rho: { label: 'Density, ρ',          log: false, min: 800,  max: 2000, step: 10,   fmt: v => v.toFixed(0) + ' kg/m³' },
   };
 
-  // Each model keeps its own parameter values. The defaults put all five
-  // near 3 kPa around 500 Hz, so the curves are comparable at first sight.
+  // Defaults put |G*| at a few kPa around 500 Hz for every model.
   const MODELS = {
-    elastic:   { name: 'Elastic', law: 'G*(ω) = μ',
-                 p: { mu: 3000, rho: 1000 },
-                 note: () => 'No loss and no dispersion: the wave has the same speed '
-                           + 'and the same shape at every frequency.' },
-    kv:        { name: 'Kelvin–Voigt', law: 'G*(ω) = μ + iωη',
-                 p: { mu: 3000, eta: 1, rho: 1000 },
-                 note: q => 'Speed and attenuation α keep growing with frequency, while the '
-                          + 'loss per wavelength approaches its upper limit, k″/k′ = 1.'
-                          + cross(q.mu / (2 * Math.PI * q.eta),
-                                  'The viscous term overtakes the elastic one at μ/(2πη) = ') },
-    maxwell:   { name: 'Maxwell', law: '1/G*(ω) = 1/μ + 1/(iωη)',
-                 p: { mu: 3000, eta: 1, rho: 1000 },
-                 note: q => 'The reverse of Kelvin–Voigt: the material flows at low '
-                          + 'frequency and behaves almost like a spring at high frequency.'
-                          + cross(q.mu / (2 * Math.PI * q.eta),
-                                  'The change happens around μ/(2πη) = ') },
-    springpot: { name: 'Spring-pot', law: 'G*(ω) = G₀(iω)<sup>γ</sup>',
-                 p: { G0: 270, g: 0.3, rho: 1000 },
-                 note: () => 'Loss per wavelength is the same at every frequency and speed '
-                           + 'follows a power law, a straight line on these axes. One '
-                           + 'exponent fixes both.' },
-    fkv:       { name: 'Fractional Kelvin–Voigt', law: 'G*(ω) = μ + G₀(iω)<sup>γ</sup>',
-                 p: { mu: 3000, G0: 270, g: 0.3, rho: 1000 },
-                 note: q => 'A spring in parallel with a spring-pot: elastic at low '
-                          + 'frequency, spring-pot at high frequency.'
-                          + (q.g > 0.01
-                             ? cross(Math.pow(q.mu / q.G0, 1 / q.g) / (2 * Math.PI),
-                                     'The two terms have equal magnitude at ')
-                             : '')
-                          + ' With γ = 1 it is Kelvin–Voigt with η = G₀.' }
+    elastic: {
+      name: 'Elastic',
+      law: 'G*(ω) = μ',
+      p: { mu: 3000, rho: 1000 },
+      note: () => 'No attenuation and no dispersion.',
+    },
+    kv: {
+      name: 'Kelvin–Voigt',
+      law: 'G*(ω) = μ + iωη',
+      p: { mu: 3000, eta: 1, rho: 1000 },
+      note: p => 'c and α grow without bound with frequency; k″/k′ tends to 1.'
+        + crossover('Storage and loss moduli are equal at μ/(2πη) =', p.mu / (2 * Math.PI * p.eta)),
+    },
+    maxwell: {
+      name: 'Maxwell',
+      law: '1/G*(ω) = 1/μ + 1/(iωη)',
+      p: { mu: 3000, eta: 1, rho: 1000 },
+      note: p => 'Viscous at low frequency (c → 0), elastic at high frequency (c → √(μ/ρ)).'
+        + crossover('Storage and loss moduli are equal at μ/(2πη) =', p.mu / (2 * Math.PI * p.eta)),
+    },
+    springpot: {
+      name: 'Spring-pot',
+      law: 'G*(ω) = G₀(iω)<sup>γ</sup>',
+      p: { G0: 270, g: 0.3, rho: 1000 },
+      note: () => 'Constant loss angle πγ/2, so k″/k′ = tan(πγ/4) at every frequency '
+        + 'and c ∝ f<sup>γ/2</sup>.',
+    },
+    fkv: {
+      name: 'Fractional Kelvin–Voigt',
+      law: 'G*(ω) = μ + G₀(iω)<sup>γ</sup>',
+      p: { mu: 3000, G0: 270, g: 0.3, rho: 1000 },
+      note: p => 'Elastic below the crossover, spring-pot above it.'
+        + (p.g > 0.01
+          ? crossover('|G₀(iω)<sup>γ</sup>| = μ at', Math.pow(p.mu / p.G0, 1 / p.g) / (2 * Math.PI))
+          : '')
+        + ' γ = 1 gives Kelvin–Voigt with η = G₀.',
+    },
   };
 
-  // G*(ω) in Pa, as [re, im].
-  function modulus(m, w){
-    const q = MODELS[m].p;
-    if (m === 'elastic') return [q.mu, 0];
-    if (m === 'kv')      return [q.mu, w * q.eta];
-    if (m === 'maxwell'){                                   // iωημ/(μ + iωη)
-      const x = w * q.eta / q.mu, d = 1 + x*x;
-      return [q.mu * x*x / d, q.mu * x / d];
+  // G*(ω) in Pa as [G', G''].
+  function modulus(m, w) {
+    const p = MODELS[m].p;
+    switch (m) {
+      case 'elastic':
+        return [p.mu, 0];
+      case 'kv':
+        return [p.mu, w * p.eta];
+      case 'maxwell': {
+        const x = w * p.eta / p.mu, d = 1 + x * x;          // x = ωτ, τ = η/μ
+        return [p.mu * x * x / d, p.mu * x / d];
+      }
+      default: {                                             // spring-pot term
+        const a = p.G0 * Math.pow(w, p.g), phi = Math.PI * p.g / 2;
+        const re = a * Math.cos(phi), im = a * Math.sin(phi);
+        return m === 'fkv' ? [p.mu + re, im] : [re, im];
+      }
     }
-    const a = q.G0 * Math.pow(w, q.g), ph = Math.PI * q.g / 2;   // G0 (iω)^γ
-    const re = a * Math.cos(ph), im = a * Math.sin(ph);
-    return m === 'springpot' ? [re, im] : [q.mu + re, im];
   }
-  // k = ω √(ρ/G*): |k| = ω √(ρ/|G*|) and arg k = -arg(G*)/2.
-  // Phase velocity c = ω/k′, attenuation α = k″, and k″/k′ = tan(arg(G*)/2).
-  function wave(m, f){
-    const w = 2 * Math.PI * f, [re, im] = modulus(m, w);
-    const kabs = w * Math.sqrt(MODELS[m].p.rho / Math.hypot(re, im));
-    const a = Math.atan2(im, re) / 2;
-    const kr = kabs * Math.cos(a), ki = kabs * Math.sin(a);
-    return { c: w / kr, alpha: ki, ratio: ki / kr, lambda: 2 * Math.PI / kr };
+
+  // Plane shear wave, k = ω√(ρ/G*) = k′ − ik″, so arg k = −arg(G*)/2.
+  function dispersion(m, f) {
+    const w = 2 * Math.PI * f;
+    const [g1, g2] = modulus(m, w);
+    const kAbs = w * Math.sqrt(MODELS[m].p.rho / Math.hypot(g1, g2));
+    const half = Math.atan2(g2, g1) / 2;
+    const k1 = kAbs * Math.cos(half), k2 = kAbs * Math.sin(half);
+    return { c: w / k1, alpha: k2, ratio: k2 / k1, lambda: 2 * Math.PI / k1, G1: g1 / 1e3, G2: g2 / 1e3 };
   }
 
   const PANELS = [
-    { cv: document.getElementById('vel'), key: 'c',     log: true },
-    { cv: document.getElementById('att'), key: 'ratio', log: false,
-      lo: -0.04, hi: 1.05, ticks: [0, 0.5, 1] }
+    { cv: $('vel'), key: 'c',     log: true },
+    { cv: $('att'), key: 'ratio', log: false, lo: -0.04, hi: 1.05, ticks: [0, 0.5, 1] },
+    { cv: $('gs'),  key: 'G1',    log: true },
+    { cv: $('gl'),  key: 'G2',    log: true },
   ];
-  PANELS.forEach(p => { p.ctx = p.cv.getContext('2d'); });
+  for (const p of PANELS) p.ctx = p.cv.getContext('2d');
 
-  const css = v => getComputedStyle(document.documentElement)
-                     .getPropertyValue(v).trim();
-
-  function size(){
-    const r = cv.getBoundingClientRect();
+  function fitCanvas(canvas, c2d) {
+    const r = canvas.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
+    canvas.width = r.width * dpr;
+    canvas.height = r.height * dpr;
+    c2d.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return r;
+  }
+
+  function resize() {
+    const r = fitCanvas(wavePlot, ctx);
     W = r.width; H = r.height;
-    cv.width = W * dpr; cv.height = H * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    for (const p of PANELS){
-      const q = p.cv.getBoundingClientRect();
+    for (const p of PANELS) {
+      const q = fitCanvas(p.cv, p.ctx);
       p.w = q.width; p.h = q.height;
-      p.cv.width = p.w * dpr; p.cv.height = p.h * dpr;
-      p.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
   }
 
-  // Wave in real space: the first SPAN metres from the source at the chosen
-  // frequency, so wavelength (2π/k′) and decay (α = k″) both change with f.
-  // The animation runs at one calm pace for every frequency and model (PACE
-  // rad/s); only the shape carries the physics.
-  // If a wavelength is under 4 px it cannot be drawn, and the band between the
-  // envelopes is shaded instead.
-  const SPAN = 0.015, PACE = 3.2;
-  function drawWave(){
-    const f = freq(parseFloat(fsl.value));
-    const r = wave(model, f);
-    const kr = 2 * Math.PI / r.lambda * SPAN;      // x runs 0..1 across SPAN
-    const ki = r.alpha * SPAN;
-    const ph = PACE * t;                           // t in seconds
+  // Displacement e^(−k″x) cos(k′x − phase) for x in [0, SPAN]. Below 4 px per
+  // wavelength the carrier would alias, so only the envelope band is filled.
+  function drawWave() {
+    const { lambda, alpha } = dispersion(model, freq(+fSlider.value));
+    const kx = 2 * Math.PI / lambda * SPAN;   // per unit plot width
+    const ax = alpha * SPAN;
+    const phase = PACE * t;
+    const mid = H / 2, amp = H * 0.34;
+    const sig = css('--signal');
 
     ctx.clearRect(0, 0, W, H);
-    const sig = css('--signal');
-    const mid = H / 2;
-    const amp = H * 0.34;
-
-    // axis
-    ctx.strokeStyle = css('--rule'); ctx.lineWidth = 1;
+    ctx.strokeStyle = css('--rule');
+    ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(0, mid); ctx.lineTo(W, mid); ctx.stroke();
 
-    // distance from the source, in mm
     ctx.fillStyle = css('--ink-3');
-    ctx.font = '11px "IBM Plex Mono", ui-monospace, monospace';
+    ctx.font = '11px ' + MONO;
     ctx.textBaseline = 'bottom';
-    for (const mm of [0, 5, 10, 15]){
-      const px = mm / (1e3 * SPAN) * W;
-      ctx.textAlign = mm === 0 ? 'left' : (mm === 15 ? 'right' : 'center');
-      ctx.fillText(mm === 15 ? '15 mm' : String(mm), px, H - 4);
+    for (const mm of [0, 5, 10, 15]) {
+      ctx.textAlign = mm === 0 ? 'left' : mm === 15 ? 'right' : 'center';
+      ctx.fillText(mm === 15 ? '15 mm' : String(mm), mm / (1e3 * SPAN) * W, H - 4);
     }
 
-    // envelope, drawn faintly: the decay the exponent produces
-    ctx.strokeStyle = sig; ctx.globalAlpha = 0.22; ctx.lineWidth = 1;
-    for (const s of [1, -1]){
+    ctx.strokeStyle = sig;
+    ctx.globalAlpha = 0.22;
+    for (const s of [1, -1]) {
       ctx.beginPath();
-      for (let px = 0; px <= W; px++){
-        const x = px / W;
-        const y = mid - s * amp * Math.exp(-ki * x);
-        px ? ctx.lineTo(px, y) : ctx.moveTo(px, y);
-      }
+      for (let px = 0; px <= W; px++) ctx.lineTo(px, mid - s * amp * Math.exp(-ax * (px / W)));
       ctx.stroke();
     }
 
-    if (2 * Math.PI / kr * W < 4){
-      ctx.fillStyle = sig; ctx.globalAlpha = 0.18;
+    if (2 * Math.PI / kx * W < 4) {
+      ctx.fillStyle = sig;
+      ctx.globalAlpha = 0.18;
       ctx.beginPath();
-      for (let px = 0; px <= W; px++) ctx.lineTo(px, mid - amp * Math.exp(-ki * px / W));
-      for (let px = W; px >= 0; px--) ctx.lineTo(px, mid + amp * Math.exp(-ki * px / W));
+      for (let px = 0; px <= W; px++) ctx.lineTo(px, mid - amp * Math.exp(-ax * px / W));
+      for (let px = W; px >= 0; px--) ctx.lineTo(px, mid + amp * Math.exp(-ax * px / W));
       ctx.fill();
       ctx.globalAlpha = 1;
       return;
     }
     ctx.globalAlpha = 1;
 
-    // the wave itself
-    ctx.strokeStyle = sig; ctx.lineWidth = 2; ctx.lineJoin = 'round';
+    ctx.lineWidth = 2;
+    ctx.lineJoin = 'round';
     ctx.beginPath();
-    for (let px = 0; px <= W; px++){
+    for (let px = 0; px <= W; px++) {
       const x = px / W;
-      const y = mid - amp * Math.exp(-ki * x) * Math.cos(kr * x - ph);
-      px ? ctx.lineTo(px, y) : ctx.moveTo(px, y);
+      ctx.lineTo(px, mid - amp * Math.exp(-ax * x) * Math.cos(kx * x - phase));
     }
     ctx.stroke();
   }
 
-  // Log axis that follows the data, with ticks at 1, 2 and 5 per decade.
-  function logRange(vals){
-    let lo = Math.min(...vals) / 1.15, hi = Math.max(...vals) * 1.15;
-    if (hi / lo < 3){ const m = Math.sqrt(hi * lo); lo = m / Math.sqrt(3); hi = m * Math.sqrt(3); }
+  // Log axis fitted to the positive data. Ticks at 1-2-5 per decade, 1-3 when
+  // the range spans more than two decades, one per decade beyond three.
+  function logAxis(vals) {
+    const pos = vals.filter(v => v > 0 && isFinite(v));
+    if (!pos.length) return { lo: 0.1, hi: 10, ticks: [1] };
+    let lo = Math.min(...pos) / 1.15, hi = Math.max(...pos) * 1.15;
+    if (hi / lo < 3) {
+      const m = Math.sqrt(hi * lo);
+      lo = m / Math.sqrt(3); hi = m * Math.sqrt(3);
+    }
+    const steps = hi / lo > 1000 ? [1] : hi / lo > 100 ? [1, 3] : [1, 2, 5];
     const ticks = [];
-    for (let e = Math.floor(Math.log10(lo)); e <= Math.ceil(Math.log10(hi)); e++)
-      for (const s of [1, 2, 5]){
+    for (let e = Math.floor(Math.log10(lo)); e <= Math.ceil(Math.log10(hi)); e++) {
+      for (const s of steps) {
         const v = s * Math.pow(10, e);
         if (v >= lo && v <= hi) ticks.push(v);
       }
+    }
     return { lo, hi, ticks };
   }
 
-  // One dispersion panel: all five models from 50 Hz to 5 kHz, each with its
-  // own parameters; the chosen one in the signal colour with a dot at f.
-  function panel(p, u0){
+  function drawPanel(p, u0) {
     const c = p.ctx, w = p.w, h = p.h;
     const L = 36, R = 10, T = 6, B = 36;
     const pw = w - L - R, ph = h - T - B;
-    const N = 160;
-    const order = Object.keys(MODELS).filter(m => m !== model).concat([model]);
+
+    // selected model last so it is drawn on top
+    const order = Object.keys(MODELS).filter(m => m !== model).concat(model);
     const curves = order.map(m => {
       const v = [];
-      for (let i = 0; i <= N; i++) v.push(wave(m, freq(-1 + 2 * i / N))[p.key]);
+      for (let i = 0; i <= N_CURVE; i++) v.push(dispersion(m, freq(-1 + 2 * i / N_CURVE))[p.key]);
       return v;
     });
-    const rg = p.log ? logRange(curves.flat()) : p;
+    const ax = p.log ? logAxis(curves.flat()) : p;
     const X = u => L + (u + 1) / 2 * pw;
     const Y = v => {
       const s = p.log
-        ? (Math.log10(v) - Math.log10(rg.lo)) / (Math.log10(rg.hi) - Math.log10(rg.lo))
-        : (v - rg.lo) / (rg.hi - rg.lo);
+        ? (Math.log10(v) - Math.log10(ax.lo)) / (Math.log10(ax.hi) - Math.log10(ax.lo))
+        : (v - ax.lo) / (ax.hi - ax.lo);
       return T + (1 - s) * ph;
     };
-    const rule = css('--rule'), ink3 = css('--ink-3'), sig = css('--signal');
-    const mono = '"IBM Plex Mono", ui-monospace, monospace';
-    c.clearRect(0, 0, w, h);
+    const sig = css('--signal'), ink3 = css('--ink-3');
 
-    c.strokeStyle = rule; c.lineWidth = 1;
+    c.clearRect(0, 0, w, h);
+    c.strokeStyle = css('--rule');
+    c.lineWidth = 1;
     c.beginPath(); c.moveTo(L, T); c.lineTo(L, T + ph); c.lineTo(L + pw, T + ph); c.stroke();
 
-    c.fillStyle = ink3; c.font = '11px ' + mono;
-    c.textAlign = 'right'; c.textBaseline = 'middle';
-    for (const v of rg.ticks){
+    c.fillStyle = ink3;
+    c.font = '11px ' + MONO;
+    c.textAlign = 'right';
+    c.textBaseline = 'middle';
+    for (const v of ax.ticks) {
       const y = Y(v);
-      c.fillText(sig3(v), L - 6, y);
+      c.fillText(fmt3(v), L - 6, y);
       c.beginPath(); c.moveTo(L - 3, y); c.lineTo(L, y); c.stroke();
     }
-    c.textAlign = 'center'; c.textBaseline = 'top';
-    for (const [f, lab] of [[50, '50'], [100, '100'], [500, '500'], [1000, '1k'], [5000, '5k']]){
-      const x = X(Math.log10(f / FMID));
-      c.fillText(lab, x, T + ph + 5);
+    c.textAlign = 'center';
+    c.textBaseline = 'top';
+    for (const [f, label] of [[50, '50'], [100, '100'], [500, '500'], [1000, '1k'], [5000, '5k']]) {
+      const x = X(Math.log10(f / F_MID));
+      c.fillText(label, x, T + ph + 5);
       c.beginPath(); c.moveTo(x, T + ph); c.lineTo(x, T + ph + 3); c.stroke();
     }
     c.fillText('f (Hz)', L + pw / 2, T + ph + 20);
 
     c.save();
     c.beginPath(); c.rect(L, T, pw, ph); c.clip();
+    // zero values (G″ of an elastic solid) have no place on a log axis: lift the pen
     order.forEach((m, j) => {
-      const sel = m === model;
-      c.strokeStyle = sel ? sig : ink3;
-      c.globalAlpha = sel ? 1 : 0.35;
-      c.lineWidth = sel ? 2 : 1;
+      const selected = m === model;
+      c.strokeStyle = selected ? sig : ink3;
+      c.globalAlpha = selected ? 1 : 0.35;
+      c.lineWidth = selected ? 2 : 1;
       c.beginPath();
+      let pen = false;
       curves[j].forEach((v, i) => {
-        const x = X(-1 + 2 * i / N), y = Y(v);
-        i ? c.lineTo(x, y) : c.moveTo(x, y);
+        if (p.log && !(v > 0)) { pen = false; return; }
+        const x = X(-1 + 2 * i / N_CURVE), y = Y(v);
+        if (pen) c.lineTo(x, y); else c.moveTo(x, y);
+        pen = true;
       });
       c.stroke();
     });
-    c.globalAlpha = 1;
     c.restore();
-    const v0 = wave(model, freq(u0))[p.key];
+
+    const v0 = dispersion(model, freq(u0))[p.key];
+    if (p.log && !(v0 > 0)) return;
     c.fillStyle = sig;
-    c.beginPath(); c.arc(X(u0), Y(v0), 4, 0, 2 * Math.PI); c.fill();
+    c.beginPath();
+    c.arc(X(u0), Y(v0), 4, 0, 2 * Math.PI);
+    c.fill();
   }
 
-  function draw(){
-    const u = parseFloat(fsl.value), f = freq(u);
-    const r = wave(model, f), M = MODELS[model];
+  function render() {
+    const u = +fSlider.value, f = freq(u);
+    const d = dispersion(model, f), M = MODELS[model];
+    const perWavelength = Math.exp(-2 * Math.PI * d.ratio);   // e^(−αλ)
 
     drawWave();
-    for (const p of PANELS) panel(p, u);
+    for (const p of PANELS) drawPanel(p, u);
 
-    const keep = Math.exp(-2 * Math.PI * r.ratio);
-    fout.textContent = hz(f);
-    cap.innerHTML = M.name + ' at ' + hz(f) + ': c = ' + sig3(r.c) + ' m/s, λ = '
-      + sig3(1e3 * r.lambda) + ' mm, α = ' + sig3(r.alpha) + ' Np/m. The wave keeps '
-      + (100 * keep).toFixed(keep < 0.01 ? 2 : 1) + '% of its amplitude per wavelength. '
+    fOut.textContent = fmtHz(f);
+    caption.innerHTML = `${M.name}, f = ${fmtHz(f)}: c = ${fmt3(d.c)} m/s, `
+      + `λ = ${fmt3(1e3 * d.lambda)} mm, α = ${fmt3(d.alpha)} Np/m, `
+      + `e<sup>−αλ</sup> = ${(100 * perWavelength).toFixed(perWavelength < 0.01 ? 2 : 1)}%. `
       + M.note(M.p);
   }
 
-  // Sliders for the parameters the chosen model actually uses.
-  function buildParams(){
-    const q = MODELS[model].p;
-    box.innerHTML = '';
-    for (const k of Object.keys(q)){
-      const s = PARAMS[k], id = 'p-' + k;
-      const row = document.createElement('div'); row.className = 'controls';
-      const lab = document.createElement('label'); lab.htmlFor = id; lab.textContent = s.label;
-      const inp = document.createElement('input'); inp.type = 'range'; inp.id = id;
-      if (s.log){
-        inp.min = Math.log10(s.min); inp.max = Math.log10(s.max); inp.step = 'any';
-        inp.value = Math.log10(q[k]);
+  function buildSliders() {
+    const p = MODELS[model].p;
+    paramBox.replaceChildren();
+    for (const key of Object.keys(p)) {
+      const def = PARAMS[key];
+      const row = document.createElement('div');
+      const label = document.createElement('label');
+      const input = document.createElement('input');
+      const out = document.createElement('span');
+
+      row.className = 'controls';
+      label.htmlFor = input.id = 'p-' + key;
+      label.textContent = def.label;
+      input.type = 'range';
+      if (def.log) {
+        input.min = Math.log10(def.min);
+        input.max = Math.log10(def.max);
+        input.step = 'any';
+        input.value = Math.log10(p[key]);
       } else {
-        inp.min = s.min; inp.max = s.max; inp.step = s.step; inp.value = q[k];
+        input.min = def.min;
+        input.max = def.max;
+        input.step = def.step;
+        input.value = p[key];
       }
-      const ro = document.createElement('span'); ro.className = 'readout';
-      ro.innerHTML = s.fmt(q[k]);
-      inp.addEventListener('input', () => {
-        q[k] = s.log ? Math.pow(10, parseFloat(inp.value)) : parseFloat(inp.value);
-        ro.innerHTML = s.fmt(q[k]);
-        draw();
+      out.className = 'readout';
+      out.innerHTML = def.fmt(p[key]);
+
+      input.addEventListener('input', () => {
+        p[key] = def.log ? Math.pow(10, +input.value) : +input.value;
+        out.innerHTML = def.fmt(p[key]);
+        render();
       });
-      row.append(lab, inp, ro);
-      box.append(row);
+
+      row.append(label, input, out);
+      paramBox.append(row);
     }
   }
 
-  function setModel(m){
+  function selectModel(m) {
     model = m;
-    btns.forEach(b => b.setAttribute('aria-checked', b.dataset.m === m ? 'true' : 'false'));
-    law.innerHTML = MODELS[m].law;
-    buildParams();
-    draw();
+    for (const b of modelBtns) b.setAttribute('aria-checked', String(b.dataset.m === m));
+    lawOut.innerHTML = MODELS[m].law;
+    buildSliders();
+    render();
   }
 
-  let last = null;
-  function loop(now){
-    if (last !== null) t += Math.min(now - last, 100) / 1000;   // seconds
-    last = now;
+  function tick(now) {
+    if (tPrev !== null) t += Math.min(now - tPrev, 100) / 1000;
+    tPrev = now;
     drawWave();
-    raf = requestAnimationFrame(loop);
+    raf = requestAnimationFrame(tick);
   }
 
-  function start(){
-    size(); setModel(model);
-    if (!reduce && raf === null) raf = requestAnimationFrame(loop);
-  }
+  fSlider.addEventListener('input', render);
+  for (const b of modelBtns) b.addEventListener('click', () => selectModel(b.dataset.m));
+  window.addEventListener('resize', () => { resize(); render(); });
+  if (document.fonts) document.fonts.ready.then(render);
 
-  fsl.addEventListener('input', draw);
-  btns.forEach(b => b.addEventListener('click', () => setModel(b.dataset.m)));
-  window.addEventListener('resize', () => { size(); draw(); });
-  document.fonts && document.fonts.ready.then(draw);
-  start();
+  resize();
+  selectModel(model);
+  if (!reduceMotion) raf = requestAnimationFrame(tick);
 })();
 </script>
 </body>
